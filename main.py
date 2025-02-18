@@ -42,8 +42,10 @@ print(extremes2)
 # Задача 3
 length_of_the_dead_zone=0
 what=extremes2[1]-extremes2[0]
+# Здесь what/1000 - ширина отрезка, разности давления теперь считаются на концах отрезка, как и должны
+# Честно говоря, т.к. pressure много больше what/1000, можно было просто взять разницу давлений
 for i in range(1000):
-    length_of_the_dead_zone+=np.sqrt((what/1000)**2+(pressure(extremes2[0]+i*what,143)-pressure(extremes2[0]+(i+1)*what,143))**2)
+    length_of_the_dead_zone+=np.sqrt((what/1000)**2+(pressure(extremes2[0]+i*what/1000,143)-pressure(extremes2[0]+(i+1)*what/1000,143))**2)
 print(length_of_the_dead_zone)
 # Задача 4
 volume=10**(-6)
@@ -63,9 +65,12 @@ for i in range(len(good_volumes)):
         good_volumes_without_0.append(good_volumes[i])
 print(good_volumes_without_0)
 # Задача 5
+Vl=good_volumes_without_0[0]
+Vg=good_volumes_without_0[2]
 integral_1=0
 for i in range(1000):
-    integral_1+=(good_volumes_without_0[2]-good_volumes_without_0[0])/1000*pressure(good_volumes_without_0[0]*i/1000+good_volumes_without_0[0]*(1000-i)/1000,143)
+    integral_1+=(Vg-Vl)/1000*pressure(Vg*i/1000+Vl*(1000-i)/1000,143)
+# При интегрировании, (Vg-Vl)/1000 - ширина прямоугольника, pressure(...) - его высота
 # Второй интеграл - просто прямоугольник
 integral_2=(good_volumes_without_0[2]-good_volumes_without_0[0])*mister_pressure
 print(integral_1,integral_2)
