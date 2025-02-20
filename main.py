@@ -48,31 +48,29 @@ for i in range(1000):
     length_of_the_dead_zone+=np.sqrt((what/1000)**2+(pressure(extremes2[0]+i*what/1000,143)-pressure(extremes2[0]+(i+1)*what/1000,143))**2)
 print(length_of_the_dead_zone)
 # Задача 4
-volume=10**(-6)
-good_volumes=[0]
+# На каждом отрезке 1 решение
+border_values=[0.00004,extremes2[0],extremes2[1],0.001]
 mister_pressure=3664187
-# Проверка того, близко ли давление при каком-то объёме к необходимому
-while True:
-    if pressure(volume,143)>0.9999*mister_pressure and pressure(volume,143)<1.0001*mister_pressure and volume-good_volumes[-1]>10**(-6):
-        good_volumes.append(round(volume,7))
-    if volume>extremes2[1] and pressure(volume,143)<3640000:
-        break
-    volume+=10**(-8)
-# Просто выкинуть 0
-good_volumes_without_0=[]
-for i in range(len(good_volumes)):
-    if good_volumes[i]!=0:
-        good_volumes_without_0.append(good_volumes[i])
-print(good_volumes_without_0)
+good_volumes=[]
+for i in range(len(border_values)-1):
+    a=border_values[i]
+    b=border_values[i+1]
+    while abs(a-b)>10**(-7):
+        if (pressure(a,143)-mister_pressure)*(pressure(a/2+b/2,143)-mister_pressure)>0:
+            a=a/2+b/2
+        else:
+            b=a/2+b/2
+    good_volumes.append(round(a/2+b/2,7))
+print(good_volumes)
 # Задача 5
-Vl=good_volumes_without_0[0]
-Vg=good_volumes_without_0[2]
+Vl=good_volumes[0]
+Vg=good_volumes[2]
 integral_1=0
 for i in range(1000):
     integral_1+=(Vg-Vl)/1000*pressure(Vg*i/1000+Vl*(1000-i)/1000,143)
 # При интегрировании, (Vg-Vl)/1000 - ширина прямоугольника, pressure(...) - его высота
 # Второй интеграл - просто прямоугольник
-integral_2=(good_volumes_without_0[2]-good_volumes_without_0[0])*mister_pressure
+integral_2=(good_volumes[2]-good_volumes[0])*mister_pressure
 print(integral_1,integral_2)
 if abs(integral_1-integral_2)<integral_2*0.1:
     print("Maxwell's rule works!")
